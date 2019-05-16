@@ -72,11 +72,18 @@ triggers_ak8pfjet_mass30 = ['HLT_AK8PFJet%d_TrimMass30_v*' % pt for pt in (360, 
 #MET
 triggers_met120_mht120 = ["HLT_PFMET120_PFMHT120_IDTight_v*"]
 triggers_metNoMu120_mhtNoMu120 = ["HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v*"]
+triggers_metNoMu60_mhtNoMu60   = ["HLT_PFMETNoMu60_PFMHTNoMu60_IDTight_v*"]
 
 
 # MET and muon+MET triggers for SOS
 triggers_SOS_doublemulowMET = ["HLT_DoubleMu3_DZ_PFMET50_PFMHT60_v*"]
-triggers_SOS_highMET = ["HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60_v*","HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v*","HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v*","HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v*"] #NoMu version
+triggers_SOS_highMET = ["HLT_PFMETNoMu100_PFMHTNoMu100_IDTight_PFHT60_v*",
+                        "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_PFHT60_v*",
+                        "HLT_PFMETNoMu120_PFMHTNoMu120_IDTight_v*",
+                        "HLT_PFMETNoMu60_PFMHTNoMu60_IDTight_v*",    # new for 2018, by ND
+                        "HLT_PFMETNoMu140_PFMHTNoMu140_IDTight_v*"] #NoMu version
+
+
 #triggers_SOS_highMET = ["HLT_PFMET100_PFMHT100_IDTight_PFHT60_v*","HLT_PFMET120_PFMHT120_IDTight_PFHT60_v*","HLT_PFMET120_PFMHT120_IDTight_v*", "HLT_PFMET140_PFMHT140_IDTight_v*"]
 triggers_SOS_tripleMu = ["HLT_TripleMu_5_3_3_Mass3p8to60_DZ_v*"]
 
