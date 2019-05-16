@@ -26,7 +26,7 @@ eventSkim.region = region
 ## Sample production and setup
 ### Trigger
 #
-# AM: FIXME fix 2018 triggers, right now a simple copy of the 2017 ones
+# AM & ND: 2018 triggers, right now a simple copy of the 2017 ones + met60 trigger
 #
 from CMGTools.RootTools.samples.triggers_13TeV_DATA2018 import *
 triggerFlagsAna.triggerBits = {
@@ -168,7 +168,10 @@ sequence = cfg.Sequence( xtracks_sequence )
 # electron id updated to MVA WP tight
 #
 lepAna.loose_electron_id = "POG_Cuts_ID_FALL17_94X_v1_ConvVetoDxyDz_Veto"  # AM: FIXME: is this actually used anywhere??
-lepAna.ele_tightId = "Cuts_FALL17_94X_v1_ConvVetoDxyDz"     # in 2017 it was "Cuts_FALL17_94X_v1_ConvVetoDxyDz"
+#lepAna.ele_tightId = "Cuts_FALL17_94X_v1_ConvVetoDxyDz"     # in 2017 it was "Cuts_FALL17_94X_v1_ConvVetoDxyDz"
+#
+lepAna.ele_tightId = "MVA_ID_Iso_Fall17_wp80"   # AM: FIXME: is this working properly?
+#
 #lepAna.ele_tightId = "MVA"     # in 2017 it was "Cuts_FALL17_94X_v1_ConvVetoDxyDz"
 #     by setting to "MVA", you get: "POG_MVA_ID_Trig_full5x5" from LeptonAnalyzer.py
 #        that means, from Electron.py: "self.mvaIDTight(full5x5=True)"
