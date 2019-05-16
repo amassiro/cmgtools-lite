@@ -26,9 +26,9 @@ eventSkim.region = region
 ## Sample production and setup
 ### Trigger
 #
-# FIXME fix 2018 triggers
+# AM: FIXME fix 2018 triggers, right now a simple copy of the 2017 ones
 #
-from CMGTools.RootTools.samples.triggers_13TeV_DATA2017 import *
+from CMGTools.RootTools.samples.triggers_13TeV_DATA2018 import *
 triggerFlagsAna.triggerBits = {
     'SingleMu' : triggers_1mu_iso,
     'SingleEl' : triggers_1e_iso + triggers_1e_noniso,
@@ -53,43 +53,26 @@ Wino_M_1000_cTau_20 = kreator.makeMCComponentFromEOS("Wino_M_1000_cTau_20", "Win
 Winos = [ Wino_M_300_cTau_3  , Wino_M_300_cTau_10 , Wino_M_300_cTau_30 , Wino_M_500_cTau_10, Wino_M_650_cTau_10, Wino_M_800_cTau_10, Wino_M_1000_cTau_10, Wino_M_500_cTau_20, Wino_M_650_cTau_20, Wino_M_800_cTau_20, Wino_M_1000_cTau_20 ]
 
 Top = [
-  TTJets
-       # TTLep
-       #, TTHad
-       #, TTSemi
+       #TTJets   ---> AM: FIXME why is this needed if the ones below are defined?
+       TTLep_pow,  
+       TTHad_pow,  
+       TTSemi_pow, 
        ] + Ts
+
 VV  = [ WW,
         WZ,
         ZZ 
       ]
 
-Zll = [
-    DYJetsToLL_M50_HT100to200
-    #DYJetsM50_HT100to200,  
-    #DYJetsM50_HT200to400,  
-    #DYJetsM50_HT400to600,  
-    #DYJetsM50_HT600to800,
-    #DYJetsM50_HT800to1200,
-    #DYJetsM50_HT1200to2500,
-    #DYJetsM50_HT2500toInf,
-]
+Zll = DYJetsToLLM50HT   # see samples_13TeV_RunIIAutumn18MiniAOD for the exact definition
 
 
-#SelectedSamples = [
-    ##QCD_HT100to200,
-    ##TTSemi,
-    ##TBar_tch,
-    #WJets_HT100to200,
-    #WJets_HT600to800,
-    #ZvvJets_HT600to800,
-#]
 
 
 if region == "sr":   
     mcSamples =  ( 
-      #SelectedSamples
-                   QCD
-                 + Ws
+                   QCDHT    # ---> AM: FIXME it was simple "QCD" in 2017
+                 + WJetsToLNuHT  # ---> AM: FIXME it was "Ws" in 2017. But Ws has both WJetsToLNuHT and the inclusive sample (in 2018 configuration, in 2017 only WHT was correctly included) -> it is double counting
                  + Zvv
                  + Zll 
                  + VV
@@ -99,11 +82,8 @@ if region == "sr":
     mcTriggers = triggers_SOS_highMET[:] 
 elif region == "cr1l": 
     mcSamples =  (
-                   #QCD
-                 #+ Ws
                  Zll 
-                 #+ VV
-                 #+ Top
+                 # AM: FIXME : add additional samples in the control region?
                  )
     mcTriggers = triggers_1mu_iso + triggers_1e_iso + triggers_1e_noniso
     mcSignals = []
@@ -113,24 +93,23 @@ cropToLumi(mcSamples, 10*41.7)
 for c in mcSamples + mcSignals:
     c.triggers = mcTriggers
 
+##
 ## Data
-#from CMGTools.RootTools.samples.samples_13TeV_DATA2018 import *   # FIXME
-from CMGTools.RootTools.samples.samples_13TeV_DATA2018_MiniAOD import *   # FIXME
-#/afs/cern.ch/work/a/amassiro/CMG/DisappearingTracks/1May2019/CMSSW_10_4_0/src/CMGTools/RootTools/python/samples/samples_13TeV_DATA2018_MiniAOD.py
+##
 
+from CMGTools.RootTools.samples.samples_13TeV_DATA2018_MiniAOD import *  
 
 if region == "sr":   
     datasetsAndTriggers = [ ("MET", triggers_SOS_highMET) ]
 elif region == "cr1l":   
     datasetsAndTriggers = [ ("SingleMuon", triggers_1mu_iso) #,
-                            #("SingleElectron", triggers_1e_iso + triggers_1e_noniso)
+                            #("EGamma", triggers_1e_iso + triggers_1e_noniso)   # AM FIXME : is the EGamma dataset needed?
                           ]
 
 json = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/PromptReco/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
 dataSamples = []; vetoTriggers = []
 for (pdname, trigs) in datasetsAndTriggers:
     for d in dataSamples_17Sep2018_plus_Prompt:
-    #for d in dataSamples_1Apr2019:
         if pdname in d.name:
             d.json = json
             d.triggers = trigs[:]
@@ -138,15 +117,19 @@ for (pdname, trigs) in datasetsAndTriggers:
             dataSamples.append(d)
     vetoTriggers += trigs
 
+
+
+
 run = getHeppyOption("run","all")
 if run == "all":    selectedComponents = mcSamples + dataSamples + mcSignals
 elif run == "data": selectedComponents = dataSamples
 elif run == "mc":   selectedComponents = mcSamples
 elif run == "sig":  selectedComponents = mcSignals
-elif run == "aod":
-    from CMGTools.RootTools.samples.samples_13TeV_DATA2017_AOD import dataSamples_17Nov2017_AOD
-    selectedComponents = [ d for d in dataSamples_17Nov2017_AOD 
-                           if "DoubleMuon" in d.name or "ZeroBias" in d.name ]
+#elif run == "aod":
+    #from CMGTools.RootTools.samples.samples_13TeV_DATA2017_AOD import dataSamples_17Nov2017_AOD
+    #selectedComponents = [ d for d in dataSamples_17Nov2017_AOD 
+                           #if "DoubleMuon" in d.name or "ZeroBias" in d.name ]
+# AM: FIXME : Any reference to AOD removed
 
 if run == "sig" or run == "mc" : isoTrackDeDxAna.doDeDx = True
 
@@ -164,14 +147,17 @@ if run == "mc":
     for c in  selectedComponents:
        c.splitFactor = len(c.files)/2
 
-if run == "aod":
-    prescaleComponents(selectedComponents, int(getHeppyOption("prescale","1")))
-    configureSplittingFromTime(selectedComponents, 50, 2.5, maxFiles=4)
+#if run == "aod":
+    #prescaleComponents(selectedComponents, int(getHeppyOption("prescale","1")))
+    #configureSplittingFromTime(selectedComponents, 50, 2.5, maxFiles=4)
+# AM: FIXME : Any reference to AOD removed
+
 
 #-------- SEQUENCE -----------
 sequence = cfg.Sequence( xtracks_sequence )
-if run == "aod":
-    sequence = cfg.Sequence( xtracks_sequence_AOD )
+#if run == "aod":
+    #sequence = cfg.Sequence( xtracks_sequence_AOD )
+# AM: FIXME : Any reference to AOD removed
 
 
 #
@@ -181,7 +167,7 @@ if run == "aod":
 #
 # electron id updated to MVA WP tight
 #
-lepAna.loose_electron_id = "POG_Cuts_ID_FALL17_94X_v1_ConvVetoDxyDz_Veto"  # is this actually used anywhere??
+lepAna.loose_electron_id = "POG_Cuts_ID_FALL17_94X_v1_ConvVetoDxyDz_Veto"  # AM: FIXME: is this actually used anywhere??
 lepAna.ele_tightId = "Cuts_FALL17_94X_v1_ConvVetoDxyDz"     # in 2017 it was "Cuts_FALL17_94X_v1_ConvVetoDxyDz"
 #lepAna.ele_tightId = "MVA"     # in 2017 it was "Cuts_FALL17_94X_v1_ConvVetoDxyDz"
 #     by setting to "MVA", you get: "POG_MVA_ID_Trig_full5x5" from LeptonAnalyzer.py
